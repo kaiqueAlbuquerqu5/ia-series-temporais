@@ -1,6 +1,7 @@
 import os
 import sys
 import pandas as pd
+import numpy as np
 from data_loader import load_data, prepare_series
 from model_trainer import train_arima_model, forecast
 from forecast_evaluator import calculate_rmse, calculate_wrmse
