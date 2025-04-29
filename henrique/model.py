@@ -19,7 +19,7 @@ import math
 ##### DADOS E VARS GLOBAIS
 
 # dados
-data = pd.read_excel("DadosCompeticao.xlsx")
+data = pd.read_excel("henrique/DadosCompeticao.xlsx")
 # razao treino/teste
 r = .8
 # indice final dos dados de treino
