@@ -2,10 +2,12 @@ import os
 import sys
 import pandas as pd
 import numpy as np
+from math import ceil
 from data_loader import load_data, prepare_series
 from model_trainer import train_arima_model, forecast
 from forecast_evaluator import calculate_rmse, calculate_wrmse
 from utils import print_verification_results, print_final_results, save_forecasts
+from forecast_plot import plot_and_save_series
 
 # Constantes
 DATA_PATH = "../data/DadosCompeticao.xlsx"
@@ -37,11 +39,13 @@ def process_series_verification(series_data):
             if len(data) < HORIZON + MIN_TRAIN_SIZE:
                 raise ValueError(f"Dados insuficientes para a série {name}")
             
-            train = data[:-HORIZON]
-            test = data[-HORIZON:]
+            size_to_test = ceil(len(data)*0.15)
+            
+            train = data[:-size_to_test]
+            test = data[-size_to_test:]
             
             model = train_arima_model(train)
-            pred = forecast(model, HORIZON)
+            pred = forecast(model, size_to_test)
             
             forecasts.append(pred)
             rmses.append(calculate_rmse(test, pred))
@@ -86,6 +90,12 @@ def obtain_predictions():
     """Fluxo completo para obtenção de previsões"""
     series_data, series_names = load_and_validate_data()
     forecasts = process_series_prediction(series_data)
+    
+    print(forecasts)
+    
+    for name, data in zip(series_names, series_data.values()):
+        plot_and_save_series(data, forecasts.pop(0), name)
+        
     print_final_results(series_names, forecasts)
     save_forecasts(forecasts, OUTPUT_PATH)
 
